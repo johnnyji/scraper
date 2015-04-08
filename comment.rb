@@ -1,9 +1,10 @@
 class Comment
   attr_reader :content
 
-  def initialize(content)
+  def initialize(user, age, content)
+    @user = user
+    @age = age
     @content = content
-    # @id = id
   end
 
 
@@ -12,8 +13,8 @@ class Comment
   # it returns the following value: object
   # it raises the following exceptions in the following circumstances: exception types and reasons
 
-  def self.create(content)
-    Comment.new(content)
+  def self.create(user, age, content)
+    Comment.new(user, age, content)
   end
 
 end

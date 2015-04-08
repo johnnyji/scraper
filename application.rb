@@ -8,36 +8,52 @@ class Application
   # it raises the following exceptions in the following circumstances: exception types and reasons
   @@link = ARGV.first
   @@file = File.open('post.html')
-  @@article = nil
 
   def self.execute
-    @@article = scrape_article
-    extract_article_data
-    format_article(Post.create)
+    extracted_data = extract_data(scraped_article)
+    post = Post.create(extracted_data)
+    format_post(post)
   end
 
   private
 
-  def self.scrape_article
+  def self.scraped_article
     Nokogiri::HTML(@@file)
-  end
-
-  def self.format_article(article)
-
   end
 
   def self.display_article #displays the 
     format_article(parsed_article)
   end
 
-  # def self.parsed_link #takes the user input link and returns the nokogiri parsed file
-  #   Nokogiri::HTML(open(@@link))
-  # end
+  def self.extract_data(article) #takes the scraped article and returns an array of the scraped article's selected data
+    sub_info = article.search('.subtext a').map {|object| object['href']}.uniq
+    article_data = {
+      title: article.css('title').text,
+      points: article.search('.score').text,
+      url: ARGV.first,
+      user: sub_info[0][8..-1],
+      item_id: sub_info[1][8..-1],
+      comments: []
+    }
 
-  def self.extract_article_data #takes the scraped article and returns an array of the scraped article's selected data
-    article_data = []
-    artice_data << @@article.css('title').css
+    article.search('.default').each do |comment|
+      user, age = comment.search('.comhead a').map {|i| i.text }
+      content = comment.search('.comment').text
+      article_data[:comments] << Comment.create(user, age, content)
+    end
+
+    article_data
+    binding.pry
   end
+
+  def self.format_post(post)
+    puts "Title: #{post.title}"
+    puts "Url: #{post.url}"
+    puts "Points: #{post.points}"
+    puts "Posted by: #{post.user}"
+    puts "ID: #{post.item_id}"
+  end
+
 
   ## private_class_methods
 
