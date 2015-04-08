@@ -8,6 +8,7 @@ class Post
   def initialize(title, url, user, item_id, points, comments=[])
     @title = title
     @points = points
+    @url = url
     @user = user
     @item_id = item_id
     @comments = comments

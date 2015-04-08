@@ -7,7 +7,7 @@ class Application
   # it returns the following value: string
   # it raises the following exceptions in the following circumstances: exception types and reasons
   @@link = ARGV.first
-  @@file = File.open('post.html')
+  @@file = File.open('./post.html')
 
   def self.execute
     extracted_data = extract_data(scraped_article)
@@ -30,7 +30,7 @@ class Application
     article_data = {
       title: Scraper.title(article),
       points: Scraper.points(article),
-      url: ARGV.first,
+      url: @@link.to_s,
       user: Scraper.user(article),
       item_id: Scraper.item_id(article),
       comments: Scraper.comments(article)
