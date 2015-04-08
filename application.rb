@@ -28,22 +28,13 @@ class Application
   def self.extract_data(article) #takes the scraped article and returns an array of the scraped article's selected data
     sub_info = article.search('.subtext a').map {|object| object['href']}.uniq
     article_data = {
-      title: article.css('title').text,
-      points: article.search('.score').text,
+      title: Scraper.title(article),
+      points: Scraper.points(article),
       url: ARGV.first,
-      user: sub_info[0][8..-1],
-      item_id: sub_info[1][8..-1],
-      comments: []
+      user: Scraper.user(article),
+      item_id: Scraper.item_id(article),
+      comments: Scraper.comments(article)
     }
-
-    article.search('.default').each do |comment|
-      user, age = comment.search('.comhead a').map {|i| i.text }
-      content = comment.search('.comment').text
-      article_data[:comments] << Comment.create(user, age, content)
-    end
-
-    article_data
-    binding.pry
   end
 
   def self.format_post(post)
