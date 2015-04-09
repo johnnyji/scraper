@@ -1,5 +1,5 @@
 class Comment
-  attr_reader :content
+  attr_reader :content, :user, :age
 
   def initialize(user, age, content)
     @user = user

@@ -13,6 +13,7 @@ class Application
     extracted_data = extract_data(scraped_article)
     post = Post.create(extracted_data)
     format_post(post)
+    show_comment?(post)
   end
 
   private
@@ -30,7 +31,7 @@ class Application
     article_data = {
       title: Scraper.title(article),
       points: Scraper.points(article),
-      url: @@link.to_s,
+      url: @@link,
       user: Scraper.user(article),
       item_id: Scraper.item_id(article),
       comments: Scraper.comments(article)
@@ -38,18 +39,36 @@ class Application
   end
 
   def self.format_post(post)
-    puts "Title: #{post.title}"
-    puts "Url: #{post.url}"
-    puts "Points: #{post.points}"
-    puts "Posted by: #{post.user}"
-    puts "ID: #{post.item_id}"
+    puts 'Title: '.colorize(:light_cyan) + "#{post.title}".colorize(:green)
+    puts 'Url: '.colorize(:light_cyan) + "#{post.url}".colorize(:green)
+    puts 'Points: '.colorize(:light_cyan) + "#{post.points}".colorize(:green)
+    puts 'Posted by: '.colorize(:light_cyan) + "#{post.user}".colorize(:green)
+    puts 'ID: '.colorize(:light_cyan) + "#{post.item_id}".colorize(:green)
   end
 
+  def self.show_comment?(post)
+    if prompt_user('Show 5 comments? (y/n): ') == "y"
+      format_comments(post)
+      show_comment?(post)
+    end
+  end
+
+  def self.format_comments(post)
+    if post.comments.size > 0
+      post.comments[1..5].each do |comment|
+        puts ''
+        puts "Posted #{comment.age} days ago by #{comment.user}: "
+        puts "#{comment.content}".colorize(:white)
+      end
+    else
+      puts 'No comment yet'
+    end
+  end
 
   ## private_class_methods
 
-  def self.prompt_user_for_comment
-    print "What would you live to comment: "
+  def self.prompt_user(question)
+    print question
     $stdin.gets.chomp
   end
 
