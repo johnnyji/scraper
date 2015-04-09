@@ -7,7 +7,7 @@ class Application
   # it returns the following value: string
   # it raises the following exceptions in the following circumstances: exception types and reasons
   @@link = ARGV.first
-  @@file = File.open('./post.html')
+  @@comment_starting_point = 0
 
   def self.execute
     extracted_data = extract_data(scraped_article)
@@ -19,7 +19,7 @@ class Application
   private
 
   def self.scraped_article
-    Nokogiri::HTML(@@file)
+    Nokogiri::HTML(open(@@link))
   end
 
   def self.display_article #displays the 
@@ -48,24 +48,39 @@ class Application
 
   def self.show_comment?(post)
     if prompt_user('Show 5 comments? (y/n): ') == "y"
-      format_comments(post)
-      show_comment?(post)
-    end
-  end
-
-  def self.format_comments(post)
-    if post.comments.size > 0
-      post.comments[1..5].each do |comment|
-        puts ''
-        puts "Posted #{comment.age} days ago by #{comment.user}: "
-        puts "#{comment.content}".colorize(:white)
+      if post.comments.size > 0
+        until no_more_comments(post)
+          post.comments[@@comment_starting_point, 5].each do |comment| 
+            format_comment(comment)
+            @@comment_starting_point += 1
+          end
+          show_comment?(post)
+        end
+      else 
+        puts "No comments yet"
       end
-    else
-      puts 'No comment yet'
     end
   end
 
   ## private_class_methods
+
+  def self.format_comment(comment)
+    puts ''
+    puts "Posted #{comment.age} days ago by #{comment.user}: "
+    puts "#{comment.content}".colorize(:white)
+  end
+
+
+  def self.no_more_comments(post)
+    @@comment_starting_point >= post.comments.size
+  end
+
+  def self.increment_comment_starting_point(post)
+    case @@comment_starting_point 
+    when post.comments.size then puts "No more commen"
+    end
+
+  end
 
   def self.prompt_user(question)
     print question
