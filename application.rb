@@ -34,6 +34,7 @@ class Application
   end
 
   def self.format_post(post)
+    raise(ArgumentError, 'Input must be an instance of Post') unless post.is_a? Post
     puts 'Title: '.colorize(:light_cyan) + "#{post.title}".colorize(:green)
     puts 'Url: '.colorize(:light_cyan) + "#{post.url}".colorize(:green)
     puts 'Points: '.colorize(:light_cyan) + "#{post.points}".colorize(:green)
@@ -42,15 +43,15 @@ class Application
   end
 
   def self.show_comment?(post)
-    if prompt_user('Show 5 comments? (y/n): ') == "y"
-      if post.comments.size > 0
-        until no_more_comments(post)
-          show_group_of_comments(post, 5)
-          show_comment?(post)
-        end
-      else 
-        puts "No comments yet"
+    raise(ArgumentError, 'Input must be an instance of Post') unless post.is_a? Post
+    if post.comments.size > 0
+      until no_more_comments(post) || prompt_user('Show 5 comments? (y/n): ') == "n"
+        show_group_of_comments(post, 5)
+        show_comment?(post)
       end
+      exit!
+    else 
+      puts "No comments yet"
     end
   end
 
