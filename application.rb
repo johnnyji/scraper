@@ -50,10 +50,7 @@ class Application
     if prompt_user('Show 5 comments? (y/n): ') == "y"
       if post.comments.size > 0
         until no_more_comments(post)
-          post.comments[@@comment_starting_point, 5].each do |comment| 
-            format_comment(comment)
-            @@comment_starting_point += 1
-          end
+          show_group_of_comments(post, 5)
           show_comment?(post)
         end
       else 
@@ -63,6 +60,13 @@ class Application
   end
 
   ## private_class_methods
+
+  def self.show_group_of_comments(post, number)
+    post.comments[@@comment_starting_point, number].each do |comment| 
+      format_comment(comment)
+      @@comment_starting_point += 1
+    end
+  end
 
   def self.format_comment(comment)
     puts ''
