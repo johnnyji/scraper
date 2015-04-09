@@ -1,11 +1,6 @@
 require './config'
 
 class Application
-
-  # Application.prompt_user_for_comment is responsible for prompting the user for an input
-  # it accepts the following parameters: nothing
-  # it returns the following value: string
-  # it raises the following exceptions in the following circumstances: exception types and reasons
   @@link = ARGV.first
   @@comment_starting_point = 0
 
